@@ -1,0 +1,1 @@
+<div class="footer"><p style="color: white; margin: 0; padding: 40px; text-align: center;">ĐÂY LÀ FOOTER</p></div>

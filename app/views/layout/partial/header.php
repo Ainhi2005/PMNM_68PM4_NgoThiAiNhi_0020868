@@ -1,0 +1,1 @@
+<div class="header"><h1 style="color: white; margin: 0; padding: 30px; text-align: center;">ĐÂY LÀ HEADER</h1></div>
