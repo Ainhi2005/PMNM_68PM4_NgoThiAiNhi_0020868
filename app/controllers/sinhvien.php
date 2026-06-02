@@ -6,7 +6,11 @@ class sinhvien extends Controller {
         $sinhvienModel = $this->model('sinhvienModel');
         $sinhvien = $sinhvienModel->getALLSinhVien();
 
-        $this->view("sinhvien/index", ["sinhvien" => $sinhvien, "title" => "Danh sach sinh vien"]);
+        $this->view("layout/masterlayout", [
+            "viewname" => "sinhvien/index",
+            "sinhvien" => $sinhvien,
+            "title" => "Danh sach sinh vien"
+        ]);
     }
     public function create() {
         // trả về view
