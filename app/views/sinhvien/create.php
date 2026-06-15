@@ -1,25 +1,39 @@
-<h1><?php echo $title ?></h1>
+<div class="card card-small">
+    <h2 style="margin-top: 0; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 12px; margin-bottom: 24px; font-size: 1.5rem;">Thêm Sinh Viên Mới</h2>
 
-<div style="margin-top: 20px; text-align: left; max-width: 500px;">
-    <form action="/PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien/store" method="POST" style="padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Họ và tên:</label>
-            <input type="text" name="sinhvien" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+    <form action="/PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien/store" method="POST">
+        <div class="form-group">
+            <label class="form-label">Họ và tên <span style="color: red;">*</span></label>
+            <input type="text" name="sinhvien" class="form-control" placeholder="Nhập họ tên sinh viên" required>
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Giới tính:</label>
-            <input type="text" name="giotinh" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+        <div class="form-group">
+            <label class="form-label">Giới tính <span style="color: red;">*</span></label>
+            <input type="text" name="giotinh" class="form-control" placeholder="Nam / Nữ" required>
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">MSSV:</label>
-            <input type="text" name="mssv" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+        <div class="form-group">
+            <label class="form-label">Mã số Sinh viên (MSSV) <span style="color: red;">*</span></label>
+            <input type="text" name="mssv" class="form-control" placeholder="Nhập MSSV" required>
         </div>
 
-        <div>
-            <button type="submit" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; cursor: pointer;">Thêm mới</button>
-            <a href="/PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien" style="margin-left: 10px; text-decoration: none; color: #333; padding: 10px 20px; border: 1px solid #ccc; background-color: #f2f2f2;">Hủy</a>
+        <div class="form-group">
+            <label class="form-label">Lớp học <span style="color: red;">*</span></label>
+            <select name="malop" class="form-control" required>
+                <option value="">-- Chọn lớp học --</option>
+                <?php if (!empty($dsLopHoc)): ?>
+                    <?php foreach ($dsLopHoc as $lh): ?>
+                        <option value="<?php echo htmlspecialchars($lh['malop']); ?>">
+                            <?php echo htmlspecialchars($lh['tenlop']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+        </div>
+
+        <div style="margin-top: 32px; display: flex; gap: 12px;">
+            <button type="submit" class="btn btn-success" style="flex: 1; padding: 12px;">Xác nhận Thêm mới</button>
+            <a href="/PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien" class="btn btn-outline" style="padding: 12px 24px;">Hủy bỏ</a>
         </div>
     </form>
 </div>
