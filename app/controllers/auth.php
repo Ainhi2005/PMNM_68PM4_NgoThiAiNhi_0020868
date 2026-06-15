@@ -14,13 +14,20 @@ class auth {
             
             if(isset($this->user[$username]) && $this->user[$username] == $password) {
                 $_SESSION['username'] = $username;
-                header("Location: /PMNM_68PM4_NgoThiAiNhi_0020868/public/home/index");
+                header("Location: /PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien/index");
                 exit();
             } else {
                 header('Location: /PMNM_68PM4_NgoThiAiNhi_0020868/public/home/login');
                 exit();
             }
         }
+    }
+
+    public function logout() {
+        session_unset();
+        session_destroy();
+        header('Location: /PMNM_68PM4_NgoThiAiNhi_0020868/public/home/login');
+        exit();
     }
 }
 ?>
