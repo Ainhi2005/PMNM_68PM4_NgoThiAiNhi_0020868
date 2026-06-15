@@ -15,26 +15,53 @@ class sinhvienModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function getTotalSinhVien()
+    public function getTotalSinhVien($search = '', $malop = '')
     {
-        $query = "SELECT COUNT(*) as total FROM tbl_sinhvien";
+        $query = "SELECT COUNT(*) as total FROM tbl_sinhvien WHERE 1=1";
+        if ($search != '') {
+            $query .= " AND (sinhvien LIKE :search OR mssv LIKE :search)";
+        }
+        if ($malop != '') {
+            $query .= " AND malop = :malop";
+        }
         $stmt = $this->conn->prepare($query);
+        if ($search != '') {
+            $searchParam = "%$search%";
+            $stmt->bindParam(':search', $searchParam);
+        }
+        if ($malop != '') {
+            $stmt->bindParam(':malop', $malop);
+        }
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
     }
 
-    public function paging($limit = 10, $offset = 0, $search = '')
+    public function paging($limit = 10, $offset = 0, $search = '', $malop = '')
     {
-        // Có thể nâng cấp để hỗ trợ $search nếu cần
-        $query = 'SELECT * FROM tbl_sinhvien LIMIT :limit OFFSET :offset';
+        $query = "SELECT s.*, l.tenlop FROM tbl_sinhvien s LEFT JOIN tbl_lophoc l ON s.malop = l.malop WHERE 1=1";
+        if ($search != '') {
+            $query .= " AND (s.sinhvien LIKE :search OR s.mssv LIKE :search)";
+        }
+        if ($malop != '') {
+            $query .= " AND s.malop = :malop";
+        }
+        $query .= " ORDER BY s.id DESC LIMIT :limit OFFSET :offset";
+
         $stmt = $this->conn->prepare($query);
-        // Bắt buộc phải ép kiểu INT cho LIMIT và OFFSET trong PDO
+        if ($search != '') {
+            $searchParam = "%$search%";
+            $stmt->bindParam(':search', $searchParam);
+        }
+        if ($malop != '') {
+            $stmt->bindParam(':malop', $malop);
+        }
         $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     public function getSinhVienById($id)
     {
         $query = "SELECT * FROM tbl_sinhvien WHERE id = :id";
@@ -44,14 +71,15 @@ class sinhvienModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateSinhVien($id, $sinhvien, $giotinh, $mssv)
+    public function updateSinhVien($id, $sinhvien, $giotinh, $mssv, $malop)
     {
-        $query = "UPDATE tbl_sinhvien SET sinhvien = :sinhvien, giotinh = :giotinh, mssv = :mssv WHERE id = :id";
+        $query = "UPDATE tbl_sinhvien SET sinhvien = :sinhvien, giotinh = :giotinh, mssv = :mssv, malop = :malop WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':sinhvien', $sinhvien);
         $stmt->bindParam(':giotinh', $giotinh);
         $stmt->bindParam(':mssv', $mssv);
+        $stmt->bindParam(':malop', $malop);
         return $stmt->execute();
     }
 
@@ -63,13 +91,14 @@ class sinhvienModel
         return $stmt->execute();
     }
 
-    public function insertSinhVien($sinhvien, $giotinh, $mssv)
+    public function insertSinhVien($sinhvien, $giotinh, $mssv, $malop)
     {
-        $query = "INSERT INTO tbl_sinhvien (sinhvien, giotinh, mssv) VALUES (:sinhvien, :giotinh, :mssv)";
+        $query = "INSERT INTO tbl_sinhvien (sinhvien, giotinh, mssv, malop) VALUES (:sinhvien, :giotinh, :mssv, :malop)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':sinhvien', $sinhvien);
         $stmt->bindParam(':giotinh', $giotinh);
         $stmt->bindParam(':mssv', $mssv);
+        $stmt->bindParam(':malop', $malop);
         return $stmt->execute();
     }
 }
