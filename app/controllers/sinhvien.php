@@ -6,11 +6,20 @@ class sinhvien extends Controller
     public function index()
     {
         $sinhvienModel = $this->model('sinhvienModel');
+        // Import lophocModel to get the list of classes for the filter
+        require_once '../app/models/lophocModel.php';
+        $lophocModel = new lophocModel();
+        $dsLopHoc = $lophocModel->getAllLopHoc();
 
-        // 1. Khai báo số lượng trên mỗi trang
-        $limit = 10;
+        // 1. Lấy tham số tìm kiếm và lọc
+        $search = $_GET['search'] ?? '';
+        $malop = $_GET['malop'] ?? '';
 
-        // 2. Lấy trang hiện tại từ URL (mặc định là trang 1)
+        // 2. Lấy số lượng trên mỗi trang
+        $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+        if ($limit < 1) $limit = 10;
+
+        // 3. Lấy trang hiện tại từ URL (mặc định là trang 1)
         $currentPage = 1;
         if (isset($_GET['page'])) {
             $currentPage = (int) $_GET['page'];
@@ -24,33 +33,42 @@ class sinhvien extends Controller
                 }
             }
         }
-        if ($currentPage < 1)
-            $currentPage = 1;
+        if ($currentPage < 1) $currentPage = 1;
 
-        // 3. Tính toán offset
+        // 4. Tính toán offset
         $offset = ($currentPage - 1) * $limit;
 
-        // 4. Lấy dữ liệu sinh viên có phân trang
-        $sinhvien = $sinhvienModel->paging($limit, $offset);
+        // 5. Lấy dữ liệu sinh viên có phân trang
+        $sinhvien = $sinhvienModel->paging($limit, $offset, $search, $malop);
 
-        // 5. Lấy tổng số sinh viên để tính tổng số trang
-        $totalRecords = $sinhvienModel->getTotalSinhVien();
+        // 6. Lấy tổng số sinh viên để tính tổng số trang
+        $totalRecords = $sinhvienModel->getTotalSinhVien($search, $malop);
         $totalPages = ceil($totalRecords / $limit);
 
-        // 6. Trả dữ liệu sang view
+        // 7. Trả dữ liệu sang view
         $this->view("layout/masterlayout", [
             "viewname" => "sinhvien/index",
             "sinhvien" => $sinhvien,
-            "title" => "Danh sach sinh vien",
+            "title" => "Danh sách sinh viên",
             "currentPage" => $currentPage,
-            "totalPages" => $totalPages
+            "totalPages" => $totalPages,
+            "totalRecords" => $totalRecords,
+            "limit" => $limit,
+            "search" => $search,
+            "malop" => $malop,
+            "dsLopHoc" => $dsLopHoc
         ]);
     }
     public function create()
     {
+        require_once '../app/models/lophocModel.php';
+        $lophocModel = new lophocModel();
+        $dsLopHoc = $lophocModel->getAllLopHoc();
+
         $this->view("layout/masterlayout", [
             "viewname" => "sinhvien/create",
-            "title" => "Thêm thông tin sinh viên"
+            "title" => "Thêm thông tin sinh viên",
+            "dsLopHoc" => $dsLopHoc
         ]);
     }
 
@@ -60,9 +78,10 @@ class sinhvien extends Controller
             $sinhvien = $_POST['sinhvien'] ?? '';
             $giotinh = $_POST['giotinh'] ?? '';
             $mssv = $_POST['mssv'] ?? '';
+            $malop = $_POST['malop'] ?? '';
 
             $sinhvienModel = $this->model('sinhvienModel');
-            $sinhvienModel->insertSinhVien($sinhvien, $giotinh, $mssv);
+            $sinhvienModel->insertSinhVien($sinhvien, $giotinh, $mssv, $malop);
         }
         header('Location: /PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien');
         exit;
@@ -82,10 +101,15 @@ class sinhvien extends Controller
             exit;
         }
 
+        require_once '../app/models/lophocModel.php';
+        $lophocModel = new lophocModel();
+        $dsLopHoc = $lophocModel->getAllLopHoc();
+
         $this->view("layout/masterlayout", [
             "viewname" => "sinhvien/edit",
             "student" => $student,
-            "title" => "Sửa thông tin sinh viên"
+            "title" => "Sửa thông tin sinh viên",
+            "dsLopHoc" => $dsLopHoc
         ]);
     }
 
@@ -95,9 +119,10 @@ class sinhvien extends Controller
             $sinhvien = $_POST['sinhvien'] ?? '';
             $giotinh = $_POST['giotinh'] ?? '';
             $mssv = $_POST['mssv'] ?? '';
+            $malop = $_POST['malop'] ?? '';
 
             $sinhvienModel = $this->model('sinhvienModel');
-            $sinhvienModel->updateSinhVien($id, $sinhvien, $giotinh, $mssv);
+            $sinhvienModel->updateSinhVien($id, $sinhvien, $giotinh, $mssv, $malop);
         }
         header('Location: /PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien');
         exit;
