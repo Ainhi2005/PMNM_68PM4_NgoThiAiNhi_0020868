@@ -14,6 +14,8 @@ class sinhvien extends Controller
         // 1. Lấy tham số tìm kiếm và lọc
         $search = $_GET['search'] ?? '';
         $malop = $_GET['malop'] ?? '';
+        $sort_by = $_GET['sort_by'] ?? 'id';
+        $sort_dir = $_GET['sort_dir'] ?? 'DESC';
 
         // 2. Lấy số lượng trên mỗi trang
         $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
@@ -39,7 +41,7 @@ class sinhvien extends Controller
         $offset = ($currentPage - 1) * $limit;
 
         // 5. Lấy dữ liệu sinh viên có phân trang
-        $sinhvien = $sinhvienModel->paging($limit, $offset, $search, $malop);
+        $sinhvien = $sinhvienModel->paging($limit, $offset, $search, $malop, $sort_by, $sort_dir);
 
         // 6. Lấy tổng số sinh viên để tính tổng số trang
         $totalRecords = $sinhvienModel->getTotalSinhVien($search, $malop);
@@ -56,6 +58,8 @@ class sinhvien extends Controller
             "limit" => $limit,
             "search" => $search,
             "malop" => $malop,
+            "sort_by" => $sort_by,
+            "sort_dir" => $sort_dir,
             "dsLopHoc" => $dsLopHoc
         ]);
     }

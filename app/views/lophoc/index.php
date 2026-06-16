@@ -39,7 +39,11 @@
             <tr>
                 <td> <?php echo $stt++; ?> </td>
                 <td> <?php echo htmlspecialchars($lh['malop']); ?> </td>
-                <td> <?php echo htmlspecialchars($lh['tenlop']); ?> </td>
+                <td> 
+                    <a href="/PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien/index?malop=<?php echo urlencode($lh['malop']); ?>" title="Xem danh sách sinh viên" style="text-decoration: none; color: #007bff; font-weight: 500;">
+                        <?php echo htmlspecialchars($lh['tenlop']); ?>
+                    </a>
+                </td>
                 <td> <?php echo htmlspecialchars($lh['ghichu']); ?> </td>
                 <td>
                     <a href="/PMNM_68PM4_NgoThiAiNhi_0020868/public/lophoc/edit/<?php echo $lh['id']; ?>" class="action-link edit">Sửa</a>

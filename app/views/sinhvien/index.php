@@ -24,19 +24,38 @@
 
                 <input type="text" name="search" class="form-control" style="width: 250px;" placeholder="Tìm tên hoặc MSSV..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
                 <input type="hidden" name="limit" value="<?php echo htmlspecialchars($limit ?? 10); ?>">
+                <input type="hidden" name="sort_by" value="<?php echo htmlspecialchars($sort_by ?? 'id'); ?>">
+                <input type="hidden" name="sort_dir" value="<?php echo htmlspecialchars($sort_dir ?? 'DESC'); ?>">
                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
             </form>
         </div>
     </div>
 
+    <?php
+    $urlParts = parse_url($_SERVER['REQUEST_URI']);
+    $queryArr = [];
+    if(isset($urlParts['query'])) {
+        parse_str($urlParts['query'], $queryArr);
+    }
+    
+    function getSortLink($column, $currentSortBy, $currentSortDir, $queryArr) {
+        $dir = 'ASC';
+        if ($currentSortBy === $column) {
+            $dir = $currentSortDir === 'ASC' ? 'DESC' : 'ASC';
+        }
+        $queryArr['sort_by'] = $column;
+        $queryArr['sort_dir'] = $dir;
+        return '?'.http_build_query($queryArr);
+    }
+    ?>
     <table class="modern-table">
         <thead>
             <tr>
                 <th>STT</th>
-                <th>Họ và tên</th>
+                <th><a href="<?php echo getSortLink('sinhvien', $sort_by ?? 'id', $sort_dir ?? 'DESC', $queryArr); ?>" style="color: inherit; text-decoration: none;">Họ và tên<?php echo (($sort_by ?? '') === 'sinhvien' ? (($sort_dir ?? '') === 'ASC' ? ' &uarr;' : ' &darr;') : ''); ?></a></th>
                 <th>Giới tính</th>
                 <th>Lớp học</th>
-                <th>MSSV</th>
+                <th><a href="<?php echo getSortLink('mssv', $sort_by ?? 'id', $sort_dir ?? 'DESC', $queryArr); ?>" style="color: inherit; text-decoration: none;">MSSV<?php echo (($sort_by ?? '') === 'mssv' ? (($sort_dir ?? '') === 'ASC' ? ' &uarr;' : ' &darr;') : ''); ?></a></th>
                 <th>Thao tác</th>
             </tr>
         </thead>
@@ -74,6 +93,8 @@
         <form method="GET" action="/PMNM_68PM4_NgoThiAiNhi_0020868/public/sinhvien/index" class="limit-form">
             <input type="hidden" name="search" value="<?php echo htmlspecialchars($search ?? ''); ?>">
             <input type="hidden" name="malop" value="<?php echo htmlspecialchars($malop ?? ''); ?>">
+            <input type="hidden" name="sort_by" value="<?php echo htmlspecialchars($sort_by ?? 'id'); ?>">
+            <input type="hidden" name="sort_dir" value="<?php echo htmlspecialchars($sort_dir ?? 'DESC'); ?>">
             <input type="number" name="limit" value="<?php echo htmlspecialchars($limit ?? 10); ?>" min="1" max="100" class="limit-input">
             <span>bản ghi/trang</span>
             <button type="submit" class="btn btn-outline" style="padding: 6px 12px;">OK</button>

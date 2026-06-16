@@ -37,7 +37,7 @@ class sinhvienModel
         return $result['total'];
     }
 
-    public function paging($limit = 10, $offset = 0, $search = '', $malop = '')
+    public function paging($limit = 10, $offset = 0, $search = '', $malop = '', $sort_by = 'id', $sort_dir = 'DESC')
     {
         $query = "SELECT s.*, l.tenlop FROM tbl_sinhvien s LEFT JOIN tbl_lophoc l ON s.malop = l.malop WHERE 1=1";
         if ($search != '') {
@@ -46,7 +46,12 @@ class sinhvienModel
         if ($malop != '') {
             $query .= " AND s.malop = :malop";
         }
-        $query .= " ORDER BY s.id DESC LIMIT :limit OFFSET :offset";
+
+        $valid_sort_columns = ['id', 'sinhvien', 'mssv'];
+        $sort_by = in_array($sort_by, $valid_sort_columns) ? $sort_by : 'id';
+        $sort_dir = strtoupper($sort_dir) === 'ASC' ? 'ASC' : 'DESC';
+
+        $query .= " ORDER BY s.$sort_by $sort_dir LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
         if ($search != '') {
